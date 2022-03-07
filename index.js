@@ -24,16 +24,29 @@ function logger(req, res, next) {
   next();
 }
 
-function checkPermission(add) {
-  return function logger(req, res, next) {
-      if(add=="librarian"){
-          return next();
+
+function checkPermission(check){
+  return function loggerIn(req,res,next){
+        if(check =="librarian"){
+            if(req.path == "/libraries"){
+                return next();
+            }else{
+                return res.send({permission:false});
+            }
+
+        }
+       else if(check =="author"){
+          if(req.path == "/authors"){
+             return next();
+          }else{
+             return res.send({permission:false})
+          }
+
+      }else{
+          return res.send("Not Allowed...");
       }
-      else if(add=="author"){
-          return next();
-      }
-      return req.send("Not librarian");
-  };
+  }
+
 }
 
 app.listen(3000, () => {
